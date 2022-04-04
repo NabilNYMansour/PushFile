@@ -28,7 +28,8 @@ io.on('connection', (socket) => {
     socket.on("take messages", (msgs) => {
         messages = JSON.parse(msgs)
         unserved.forEach((clientId) =>
-            messages.forEach((msg) => io.sockets.sockets.get(clientId).emit('chat message', msg)))
+            messages.forEach((msg) => io.sockets.sockets.get(clientId).emit('chat message', msg)));
+        unserved = [];
     });
 
     socket.on('disconnect', () => {
