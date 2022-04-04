@@ -1,4 +1,2 @@
 # PushFile
-A self updating message app using Socket.io.
-
-This is used to learn how to use socket.io for future projects.
+A file and clipboard sharing application using socket.io.
