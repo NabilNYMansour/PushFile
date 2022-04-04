@@ -1,4 +1,0 @@
-- Tutorial taken from but expanded upon:
-https://socket.io/get-started/chat
-
-- Just check documentation if you need something, you will see many want it too.

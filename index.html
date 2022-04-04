@@ -58,52 +58,114 @@
         #messages>li:nth-child(odd) {
             background: #efefef;
         }
+        
+        #bin {
+            display: none;
+            /* color: green; */
+        }
     </style>
 </head>
 
 <body>
     <ul id="messages"></ul>
-    <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Send</button>
+    <form id="form" action="POST">
+        <input id="file" type="file" name="filename">
+        <button id="send">Send</button>
     </form>
 
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        const downloadFile = (filename, fileurl) => {
+            var element = document.createElement('a');
+            // console.log(fileurl);
+            element.setAttribute('href', fileurl);
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+        }
+
+        const appendHTML = (msg) => {
+            var filename = document.createElement('span');
+            filename.textContent = JSON.parse(msg)[0];
+
+            var fileurl = document.createElement('span');
+            fileurl.textContent = JSON.parse(msg)[1];
+            fileurl.id = "bin";
+
+            var button = document.createElement('button');
+            button.textContent = "Download"
+            button.addEventListener("click", () => downloadFile(filename.textContent, fileurl.textContent));
+
+            var item = document.createElement('li');
+            item.appendChild(filename);
+            item.appendChild(fileurl);
+            item.appendChild(button);
+
+
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+
         var socket = io();
         var messages_list = [];
 
         var form = document.getElementById('form');
-        var input = document.getElementById('input');
+        // var input = document.getElementById('input');
+        var input = '';
+
+        document.querySelector("#send").addEventListener('click', function() {
+            console.log("sending...");
+            // no file selected to read
+            if (document.querySelector("#file").value == '') {
+                console.log('No file selected');
+                return;
+            }
+
+            var file = document.querySelector("#file").files[0];
+            console.log(file);
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                // binary data
+                input = JSON.stringify([file.name, e.target.result]);
+                if (input) {
+                    socket.emit('chat message', input);
+                    appendHTML(input);
+                    messages_list.push(input)
+                        // console.log(input);
+                    input = '';
+                }
+            };
+
+            reader.onerror = function(e) {
+                // error occurred
+                console.log('Error : ' + e.type);
+            };
+            reader.readAsDataURL(file);
+        });
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            if (input.value) {
-                socket.emit('chat message', input.value);
-                var item = document.createElement('li');
-                item.textContent = input.value;
-                messages.appendChild(item);
-                window.scrollTo(0, document.body.scrollHeight);
-                messages_list.push(input.value)
-                input.value = '';
-            }
-            console.log(messages_list);
-
         });
 
         socket.on('chat message', function(msg) {
-            var item = document.createElement('li');
-            item.textContent = msg;
-            messages.appendChild(item);
-            window.scrollTo(0, document.body.scrollHeight);
+            appendHTML(msg);
             messages_list.push(msg)
-            console.log(messages_list);
+                // console.log(messages_list);
         });
 
         socket.on("give messages", () => socket.emit("take messages", JSON.stringify(messages_list)))
 
         socket.on('init', (msg) => console.log(msg));
         socket.on('user disconnect', (msg) => console.log(msg));
+        socket.on("will disconnect all", () => alert("Files total size exceeds maximum. Disconnected"))
     </script>
 
 

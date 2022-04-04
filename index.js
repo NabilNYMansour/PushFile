@@ -4,10 +4,14 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+const maxFileSize = process.env.MAXFILESIZE || 1e+9;
+const port = process.env.PORT || 3000;
 
 let clients = [];
 let messages = [];
 let unserved = [];
+
+const byteCount = (s) => encodeURI(s).split(/%..|./).length - 1;
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
@@ -20,16 +24,26 @@ io.on('connection', (socket) => {
     // console.log("first socket is:", io.sockets.sockets.get(clients[0]).id);
 
     if (socket.id !== clients[0]) {
-        console.log("requesting messages");
+        console.log("requesting messages...");
         io.sockets.sockets.get(clients[0]).emit("give messages");
         unserved.push(socket.id);
     }
 
     socket.on("take messages", (msgs) => {
-        messages = JSON.parse(msgs)
-        unserved.forEach((clientId) =>
-            messages.forEach((msg) => io.sockets.sockets.get(clientId).emit('chat message', msg)));
+        // console.log(byteCount(msgs));
+        if (byteCount(msgs) > maxFileSize) {
+            clients.forEach((clientId) => {
+                io.sockets.sockets.get(clientId).emit("will disconnect all");
+                io.sockets.sockets.get(clientId).disconnect();
+            })
+            clients = [];
+        } else {
+            messages = JSON.parse(msgs);
+            unserved.forEach((clientId) =>
+                messages.forEach((msg) => io.sockets.sockets.get(clientId).emit('chat message', msg)));
+        }
         unserved = [];
+        messages = [];
     });
 
     socket.on('disconnect', () => {
@@ -39,13 +53,23 @@ io.on('connection', (socket) => {
     });
 
     socket.on('chat message', (msg) => {
-        socket.broadcast.emit('chat message', msg);
-        console.log('message: ' + msg);
+        if (byteCount(msg) > maxFileSize) {
+            clients.forEach((clientId) => {
+                io.sockets.sockets.get(clientId).emit("will disconnect all");
+                io.sockets.sockets.get(clientId).disconnect();
+            })
+            clients = [];
+            unserved = [];
+            messages = [];
+        } else {
+            socket.broadcast.emit('chat message', msg);
+            // console.log('message: ' + msg);
+        }
     });
 
     socket.emit("init", "welcome");
 });
 
-server.listen(3000, () => {
-    console.log('listening on *:3000');
+server.listen(port, () => {
+    console.log(`Port: ${port}`);
 });
