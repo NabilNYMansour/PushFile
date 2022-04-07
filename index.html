@@ -77,17 +77,24 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const downloadFile = (filename, fileurl) => {
-            var element = document.createElement('a');
-            // console.log(fileurl);
-            element.setAttribute('href', fileurl);
-            element.setAttribute('download', filename);
+            // var element = document.createElement('a');
+            // // console.log(fileurl);
+            // element.setAttribute('href', fileurl);
+            // element.setAttribute('download', filename);
 
-            element.style.display = 'none';
-            document.body.appendChild(element);
+            // element.style.display = 'none';
+            // document.body.appendChild(element);
 
-            element.click();
+            // element.click();
 
-            document.body.removeChild(element);
+            // document.body.removeChild(element);
+            var link = document.createElement("a");
+            link.download = filename;
+            link.href = fileurl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            delete link;
         }
 
         const appendHTML = (msg) => {
@@ -139,7 +146,7 @@
                     socket.emit('chat message', input);
                     appendHTML(input);
                     messages_list.push(input)
-                        // console.log(input);
+                    console.log(input);
                     input = '';
                 }
             };
