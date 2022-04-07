@@ -76,33 +76,6 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const dataURItoBlob = (dataURI) => {
-            // convert base64 to raw binary data held in a string
-            // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-            var byteString = atob(dataURI.split(',')[1]);
-
-            // separate out the mime component
-            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
-
-            // write the bytes of the string to an ArrayBuffer
-            var ab = new ArrayBuffer(byteString.length);
-
-            // create a view into the buffer
-            var ia = new Uint8Array(ab);
-
-            // set the bytes of the buffer to the correct values
-            for (var i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-
-            // write the ArrayBuffer to a blob, and you're done
-            var blob = new Blob([ab], {
-                type: mimeString
-            });
-            return blob;
-
-        }
-
         const downloadFile = (filename, fileurl) => {
             var element = document.createElement('a');
             element.setAttribute('href', fileurl);
@@ -114,7 +87,6 @@
             element.click();
 
             document.body.removeChild(element);
-            saveAs(dataURItoBlob(fileurl), filename);
         }
 
         const appendHTML = (msg) => {
@@ -183,6 +155,7 @@
         socket.on('chat message', function(msg) {
             appendHTML(msg);
             messages_list.push(msg)
+                // console.log(messages_list);
         });
 
         socket.on("give messages", () => socket.emit("take messages", JSON.stringify(messages_list)))
