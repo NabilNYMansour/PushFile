@@ -104,28 +104,28 @@
         }
 
         const downloadFile = (filename, fileurl) => {
-            // var element = document.createElement('a');
-            // element.setAttribute('href', fileurl);
-            // element.setAttribute('download', filename);
+            var element = document.createElement('a');
+            element.setAttribute('href', fileurl);
+            element.setAttribute('download', filename);
 
-            // element.style.display = 'none';
-            // document.body.appendChild(element);
+            element.style.display = 'none';
+            document.body.appendChild(element);
 
-            // element.click();
+            element.click();
 
-            // document.body.removeChild(element);
+            document.body.removeChild(element);
 
-            var file = dataURItoBlob(fileurl)
-            var reader = new FileReader();
-            reader.onload = function() {
-                var popup = window.open();
-                var link = document.createElement('a');
-                link.setAttribute('href', reader.result);
-                link.setAttribute('download', filename);
-                popup.document.body.appendChild(link);
-                link.click();
-            }
-            reader.readAsDataURL(file);
+            // var file = dataURItoBlob(fileurl)
+            // var reader = new FileReader();
+            // reader.onload = function() {
+            //     var popup = window.open();
+            //     var link = document.createElement('a');
+            //     link.setAttribute('href', reader.result);
+            //     link.setAttribute('download', filename);
+            //     popup.document.body.appendChild(link);
+            //     link.click();
+            // }
+            // reader.readAsDataURL(file);
         }
 
         const appendHTML = (msg) => {
