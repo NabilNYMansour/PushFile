@@ -77,24 +77,17 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const downloadFile = (filename, fileurl) => {
-            // var element = document.createElement('a');
-            // // console.log(fileurl);
-            // element.setAttribute('href', fileurl);
-            // element.setAttribute('download', filename);
+            var element = document.createElement('a');
+            // console.log(fileurl);
+            element.setAttribute('href', fileurl);
+            element.setAttribute('download', filename);
 
-            // element.style.display = 'none';
-            // document.body.appendChild(element);
+            element.style.display = 'none';
+            document.body.appendChild(element);
 
-            // element.click();
+            element.click();
 
-            // document.body.removeChild(element);
-            var link = document.createElement("a");
-            link.download = filename;
-            link.href = fileurl;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            delete link;
+            document.body.removeChild(element);
         }
 
         const appendHTML = (msg) => {
@@ -124,7 +117,6 @@
         var messages_list = [];
 
         var form = document.getElementById('form');
-        // var input = document.getElementById('input');
         var input = '';
 
         document.querySelector("#send").addEventListener('click', function() {
@@ -136,7 +128,6 @@
             }
 
             var file = document.querySelector("#file").files[0];
-            console.log(file);
             var reader = new FileReader();
 
             reader.onload = function(e) {
