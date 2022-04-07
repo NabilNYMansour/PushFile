@@ -105,20 +105,6 @@
         }
 
 
-        const downloadFile = (filename, fileurl) => {
-            // var element = document.createElement('a');
-            // element.setAttribute('href', fileurl);
-            // element.setAttribute('download', filename);
-
-            // element.style.display = 'none';
-            // document.body.appendChild(element);
-
-            // element.click();
-
-            // document.body.removeChild(element);
-            saveAs(dataURItoBlob(fileurl), filename);
-        }
-
         const appendHTML = (msg) => {
             var filename = document.createElement('span');
             filename.textContent = JSON.parse(msg)[0];
@@ -129,7 +115,7 @@
 
             var button = document.createElement('button');
             button.textContent = "Download"
-            button.addEventListener("click", () => downloadFile(filename.textContent, fileurl.textContent));
+            button.addEventListener("click", () => saveAs(dataURItoBlob(fileurl.textContent), filename.textContent));
 
             var item = document.createElement('li');
             item.appendChild(filename);
