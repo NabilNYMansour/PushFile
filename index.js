@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const https = require('https');
+const http = require('http');
 const maxFileSize = process.env.MAXFILESIZE || 1e+9;
 const port = process.env.PORT || 3000;
 
@@ -10,21 +11,22 @@ let unserved = [];
 
 const byteCount = (s) => encodeURI(s).split(/%..|./).length - 1;
 
-const fs = require('fs');
-const cors = require('cors');
-app.use(cors());
-const key = fs.readFileSync('selfsigned.key');
-const cert = fs.readFileSync('selfsigned.crt');
-const options = {
-    key: key,
-    cert: cert
-};
+// const fs = require('fs');
+// const cors = require('cors');
+// app.use(cors());
+// const key = fs.readFileSync('selfsigned.key');
+// const cert = fs.readFileSync('selfsigned.crt');
+// const options = {
+//     key: key,
+//     cert: cert
+// };
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-const server = https.createServer(options, app);
+// const server = https.createServer(options, app);
+const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
