@@ -52,8 +52,11 @@ io.on('connection', (socket) => {
             clients = [];
         } else {
             messages = JSON.parse(msgs);
-            unserved.forEach((clientId) =>
-                messages.forEach((msg) => io.sockets.sockets.get(clientId).emit('chat message', msg)));
+            unserved.forEach((clientId) => {
+                io.sockets.sockets.get(clientId).emit('loading');
+                messages.forEach((msg) => io.sockets.sockets.get(clientId).emit('chat message', msg));
+                io.sockets.sockets.get(clientId).emit('stop loading');
+            });
         }
         unserved = [];
         messages = [];
