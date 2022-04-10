@@ -68,7 +68,7 @@
 
 <body>
     <ul id="messages"></ul>
-    <form id="form" action="POST">
+    <form id="form">
         <input id="file" type="file" name="filename">
         <button id="send" onclick="sendfunc()">Send</button>
         <span id="loading"></span>
@@ -119,7 +119,7 @@
         var form = document.getElementById('form');
         var input = '';
 
-        function sendfunc() {
+        const sendfunc = () => {
             console.log("sending...");
             socket.emit('sending');
             // no file selected to read
@@ -141,6 +141,7 @@
                         // console.log(input);
                     input = '';
                     socket.emit('finished sending');
+                    console.log("finished sending");
                 }
             };
 
