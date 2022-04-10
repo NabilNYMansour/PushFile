@@ -80,6 +80,14 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('sending', () => {
+        socket.broadcast.emit('loading');
+    });
+
+    socket.on('finished sending', () => {
+        socket.broadcast.emit('stop loading');
+    });
+
     socket.emit("init", "welcome");
 });
 

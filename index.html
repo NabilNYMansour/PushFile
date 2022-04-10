@@ -71,6 +71,7 @@
     <form id="form" action="POST">
         <input id="file" type="file" name="filename">
         <button id="send" onclick="sendfunc()">Send</button>
+        <span id="loading"></span>
     </form>
 
 
@@ -120,6 +121,7 @@
 
         function sendfunc() {
             console.log("sending...");
+            socket.emit('sending');
             // no file selected to read
             if (document.querySelector("#file").value == '') {
                 console.log('No file selected');
@@ -138,6 +140,7 @@
                     messages_list.push(input)
                         // console.log(input);
                     input = '';
+                    socket.emit('finished sending');
                 }
             };
 
@@ -163,6 +166,18 @@
         socket.on('init', (msg) => console.log(msg));
         socket.on('user disconnect', (msg) => console.log(msg));
         socket.on("will disconnect all", () => alert("Files total size exceeds maximum. Disconnected"))
+
+        socket.on('loading', () => {
+            console.log("loading");
+            var loading = document.getElementById('loading');
+            loading.textContent = "LOADING";
+        });
+
+        socket.on('stop loading', () => {
+            console.log("loading finished");
+            var loading = document.getElementById('loading');
+            loading.textContent = "";
+        });
     </script>
 
 
