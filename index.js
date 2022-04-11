@@ -27,7 +27,9 @@ app.get('/', (req, res) => {
 
 // const server = https.createServer(options, app);
 const server = http.createServer(app);
-const { Server } = require("socket.io");
+const { Server } = require("socket.io")(httpServer, {
+    maxHttpBufferSize: maxFileSize
+});
 const io = new Server(server);
 
 io.on('connection', (socket) => {
