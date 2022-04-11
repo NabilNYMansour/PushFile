@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
         console.log("requesting messages...");
         io.sockets.sockets.get(clients[0]).emit("give messages");
         unserved.push(socket.id);
+        unserved.forEach((clientId) => io.sockets.sockets.get(clientId).emit('loading'));
     }
 
     socket.on("take messages", (msgs) => {
@@ -55,7 +56,6 @@ io.on('connection', (socket) => {
         } else {
             messages = JSON.parse(msgs);
             unserved.forEach((clientId) => {
-                io.sockets.sockets.get(clientId).emit('loading');
                 messages.forEach((msg) => io.sockets.sockets.get(clientId).emit('chat message', msg));
                 io.sockets.sockets.get(clientId).emit('stop loading');
             });
