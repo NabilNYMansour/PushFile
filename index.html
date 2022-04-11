@@ -78,16 +78,29 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const downloadFile = (filename, fileurl) => {
-            var element = document.createElement('a');
-            element.setAttribute('href', fileurl);
-            element.setAttribute('download', filename);
+            // var element = document.createElement('a');
+            // element.setAttribute('href', fileurl);
+            // element.setAttribute('download', filename);
 
-            element.style.display = 'none';
-            document.body.appendChild(element);
+            // element.style.display = 'none';
+            // document.body.appendChild(element);
 
-            element.click();
+            // element.click();
 
-            document.body.removeChild(element);
+            // document.body.removeChild(element);
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', fileurl, true);
+            xhr.responseType = 'blob';
+            xhr.onload = function(e) {
+                if (this.status == 200) {
+                    var myBlob = this.response;
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(myBlob);
+                    link.download = filename;
+                    link.click();
+                }
+            };
+            xhr.send();
         }
 
         const appendHTML = (msg) => {
