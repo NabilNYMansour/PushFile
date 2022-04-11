@@ -71,7 +71,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('chat message', (msg) => {
-        console.log("received:", msg);
         if (byteCount(msg) > maxFileSize) {
             clients.forEach((clientId) => {
                 io.sockets.sockets.get(clientId).emit("will disconnect all");
