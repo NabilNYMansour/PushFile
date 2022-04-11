@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
         console.log("requesting messages...");
         io.sockets.sockets.get(clients[0]).emit("give messages");
         unserved.push(socket.id);
-        unserved.forEach((clientId) => io.sockets.sockets.get(clientId).emit('loading'));
+        unserved.forEach((clientId) => io.sockets.sockets.get(clientId) ? io.sockets.sockets.get(clientId).emit('loading') : null);
     }
 
     socket.on("take messages", (msgs) => {
