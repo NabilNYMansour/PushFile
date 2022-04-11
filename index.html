@@ -113,7 +113,10 @@
         }
 
 
-        var socket = io();
+        var socket = io({
+            transports: ['websocket'],
+            upgrade: false
+        });
         var messages_list = [];
 
         var form = document.getElementById('form');
